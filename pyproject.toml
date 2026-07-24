@@ -1,0 +1,71 @@
+[build-system]
+requires = ["maturin>=1.14.1,<1.15"]
+build-backend = "maturin"
+
+[project]
+name = "designkit"
+dynamic = ["version"]
+description = "A modern Python toolkit for software architecture, featuring all 23 GoF + 6 original design patterns, original architectural patterns, and powerful developer utilities."
+readme = "README.md"
+requires-python = ">=3.14"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Sheñey", email = "sheneyby2010@gmail.com" }
+]
+keywords = [
+    "patterns",
+    "design",
+    "kit",
+    "utils",
+    "framework",
+    "rust",
+    "pyo3",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+
+    "License :: OSI Approved :: MIT License",
+
+    "Programming Language :: Rust",
+
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.14",
+
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+
+    "Operating System :: OS Independent",
+
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = [
+    "designkit_utils>=0.6.1,<0.7",
+    "rich>=15.0.0,<16.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Sheniey/designkit"
+Documentation = "https://github.com/Sheniey/designkit"
+Repository = "https://github.com/Sheniey/designkit"
+Issues = "https://github.com/Sheniey/designkit/issues"
+Changelog = "https://github.com/Sheniey/designkit/releases"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.1.1,<10.0",
+    "pytest-cov>=5.3.1,<6.0",
+    "mypy",
+]
+
+[tool.maturin]
+python-source = "rust"
+module-name = "designkit._designkit"
+features = ["pyo3/extension-module"]
+strip = true
