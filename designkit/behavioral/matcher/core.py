@@ -154,14 +154,15 @@ class Matcher[R]:
         self.__recursion_depth: int = 0
 
     def __add__(self, other: Matcher | list[Case] | Case) -> Self:
-        if isinstance(other, Matcher):
-            self.__cases.extend(other.cases)
-        elif isinstance(other, list):
-            self.__cases.extend(other)
-        elif isinstance(other, Case):
-            self.__cases.append(other)
-        else:
-            raise UnsupportedTypeError('__add__', type(other))
+        match other:
+            case Matcher():
+                self.__cases.extend(other.cases)
+            case list() if all(isinstance(c, Case) for c in other):
+                self.__cases.extend(other)
+            case Case():
+                self.__cases.append(other)
+            case _:
+                raise UnsupportedTypeError('__add__', type(other))
         
         return self
 

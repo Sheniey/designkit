@@ -1,0 +1,26 @@
+blank_issues_enabled: false
+
+issue_templates:
+  - name: "Bug Report"
+    description: "Report a bug in the DesignKit."
+    title: "[Bug]: "
+    labels: ["bug"]
+    body: "./ISSUE_TEMPLATE/bug_report.md"
+
+  - name: "Design Pattern Request"
+    description: "Propose a new design pattern."
+    title: "[Design Pattern]: "
+    labels: ["enhancement"]
+    body: "./ISSUE_TEMPLATE/pattern_request.md"
+
+  - name: "Documentation"
+    description: "Suggest updates or additions to the documentation."
+    title: "[Docs]: "
+    labels: ["documentation"]
+    body: "./ISSUE_TEMPLATE/documentation.md"
+
+  - name: "General Report"
+    description: "Provide general feedback or inquiries."
+    title: "[General]: "
+    labels: ["general"]
+    body: "./ISSUE_TEMPLATE/general_report.md"

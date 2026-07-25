@@ -15,7 +15,7 @@
  - [ ] Flyweight
  - [ ] Proxy
 
-### Behavioral (11)
+### Behavioral (18)
  - [X] Chain of Responsibility
  - [X] Command
  - [X] Interpreter
