@@ -1,13 +1,11 @@
 use pyo3::prelude::*;
+use pyo3_stub_gen::define_stub_info_gatherer;
+mod designkit;
 
-/// A Python module implemented in Rust.
 #[pymodule]
-mod designkit {
-    use pyo3::prelude::*;
-
-    /// Formats the sum of two numbers as string.
-    #[pyfunction]
-    fn sum_as_string(a: usize, b: usize) -> PyResult<String> {
-        Ok((a + b).to_string())
-    }
+fn _designkit(m: &Bound<'_, PyModule>) -> PyResult<()> {
+    designkit::register(m)?;
+    Ok(())
 }
+
+define_stub_info_gatherer!(stub_info);

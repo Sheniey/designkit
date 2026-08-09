@@ -20,13 +20,36 @@ class Assertion:
     def __str__(self) -> str:
         return repr(self)
 
+    def _be_void(self) -> bool:
+        return self.__target is not None or not self.__target
+
+    def assert_be_void(self, message: str) -> Self:
+        """Assert that an object is not None or empty."""
+        if not self._be_void():
+            raise AssertionError(message)
+        return self
+
+    def must_be_void(self, custom_expt: type[Exception] = ValueError) -> None:
+        """Require that an object is not None or empty."""
+        if not self._be_void():
+            raise custom_expt(f'Object {self.__target} is None or empty')
+
+    def should_be_void(self) -> bool:
+        """Check that an object is not None or empty."""
+        return self._be_void()
+
     def _be(self, *types: type) -> bool:
+        fil_types: list = list(filter(lambda t: t is not None, types))
+
+        if len(fil_types) < len(types) and self.__target is None:
+            return True
+        
         if (
             # literal type check
-            isinstance(self.__target, types)
+            any(isinstance(self.__target, t) for t in fil_types)
             or
             # duck type check
-            any(issubclass(type(self.__target), t) for t in types)
+            any(issubclass(type(self.__target), t) for t in fil_types)
             or
             # attribute check -- weird ik
             getattr(self.__target, '__dict__', None) and not any(hasattr(self.__target, attr) for attr in dir(self.__target) if not attr.startswith('__'))
@@ -43,7 +66,7 @@ class Assertion:
     def must_be(self, *types: type, custom_expt: type[Exception] = TypeError) -> None:
         """Require that an object is of a certain type."""
         if not self._be(*types):
-            raise custom_expt(f'Object {self.__target} is not of type {types}')
+            raise custom_expt(f'Object {self.__target} is not one of the following types {", ".join(classname(t) for t in types)}')
 
     def should_be(self, *types: type) -> bool:
         """Check that an object is of a certain type."""

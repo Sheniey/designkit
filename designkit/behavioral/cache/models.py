@@ -1,6 +1,7 @@
 
 from abc import ABC, abstractmethod
 
+_MISSING = object()
 
 class AbstractCache[T](ABC):
     @abstractmethod

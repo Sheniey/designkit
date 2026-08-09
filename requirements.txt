@@ -1,3 +1,5 @@
 
 designkit_utils==0.6.1
+validators==0.35.0
+pathlib==1.0.1
 rich==15.0.0
