@@ -1,11 +1,11 @@
 
 import re
-from dataclasses import dataclass
 from decimal import Decimal
 from designkit.behavioral.typing import Assertion, classname
-from typing import Any, Self, Never
+from typing import Self
 
-from designkit.creational.types.utils import Numeric, DType, parser_cache, Default
+from designkit.creational.types.utils import Numeric, DType
+
 
 celsius_pattern: re.Pattern = re.compile(r'([+-]?\d+(\.\d+)?)\s*(°C|C|celsius|Celsius)', re.IGNORECASE)
 fahrenheit_pattern: re.Pattern = re.compile(r'([+-]?\d+(\.\d+)?)\s*(°F|F|fahrenheit|Fahrenheit)', re.IGNORECASE)
@@ -50,15 +50,15 @@ class _TemperatureUnit(DType):
 
     @staticmethod
     def validate(value: str | Numeric | _TemperatureUnit) -> bool:
-        raise NotImplementedError("Subclasses must implement the parse method.")
+        raise NotImplementedError('Subclasses must implement the parse method.')
 
     @classmethod
     def parse(cls, value: str | Numeric | _TemperatureUnit) -> _TemperatureUnit | None:
-        raise NotImplementedError("Subclasses must implement the parse method.")
+        raise NotImplementedError('Subclasses must implement the parse method.')
 
     @classmethod
     def findall(cls, value: str | Numeric | _TemperatureUnit) -> list[_TemperatureUnit]:
-        raise NotImplementedError("Subclasses must implement the findall method.")
+        raise NotImplementedError('Subclasses must implement the findall method.')
 
     @property
     def value(self) -> Decimal:

@@ -1,5 +1,6 @@
 
 from .core import (
     Assertion,
-    classname, structure
+    classname,
+    structure, attributes, methods, fields
 )

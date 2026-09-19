@@ -64,21 +64,3 @@ class Invalid[T](ValidatedResponse[Never, T]):
 
 type Validated[T] = Valid[T] | Invalid[T]
 
-
-# Example Usage:
-
-db: list[int] = [-3, 0, 5, 10, -62, 13, 2]
-
-def are_all_positive(n: list[int]) -> bool:
-    return all(x > 0 for x in n)
-
-def validate_db() -> Validated[list[int]]:
-    return Validation.validate(db, are_all_positive)
-
-results: Validated[list[int]] = validate_db()
-
-match results:
-    case Valid(value=numbers):
-        print(f"All numbers are valid: {numbers}")
-    case Invalid(value=numbers):
-        print(f"Few numbers are invalid: {numbers}")

@@ -3,10 +3,9 @@ import re
 from datetime import datetime
 from designkit.behavioral.typing import Assertion, classname
 from designkit.creational.types.dtypes.card_networks import MII, CardNetwork, CardNetworks
-from decimal import Decimal
-from typing import Any, Self, Literal
 
-from designkit.creational.types.utils import Numeric, DType, parser_cache
+from designkit.creational.types.utils import DType, parser_cache
+
 
 type MonthYear = tuple[int, int]
 

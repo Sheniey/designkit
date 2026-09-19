@@ -13,6 +13,8 @@ from .dtypes.temperature import Celsius, Fahrenheit, Kelvin, Temperature
 from .dtypes.phone import Phone
 from .dtypes.email import Email
 
+from .dtypes.coordinates import Coordinate, Latitude, Longitude
+
 from .dtypes.blob import Blob
 from .dtypes.ident import Identifier
 

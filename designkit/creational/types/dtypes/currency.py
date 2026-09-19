@@ -1,11 +1,14 @@
 
 import re
 from decimal import Decimal
-from designkit.creational.singleton import singleton
-from designkit.behavioral.typing import Assertion, classname
-from typing import Any, Literal, Self
+from typing import Literal
 
-from designkit.creational.types.utils import Numeric, DType, parser_cache
+from designkit.behavioral.typing import Assertion, classname
+from designkit.creational.types.utils import parser_cache
+
+
+type MoneySpecifierFormat = Literal['all', 'informal', 'formal', 'short', 'no_sign', 'textual', 'en_textual', 'none']
+DEFAULT_SPECIFIER = 'comma:formal'
 
 
 class Currency:
@@ -139,33 +142,89 @@ rf'''
     def __repr__(self) -> str:
         return f'{classname(self)}(symbol={self.__symbol!r}, code={self.__code!r}, name={self.__name!r})'
 
-    def format_amount(self, amount: Decimal, repr: Literal['all', 'informal', 'formal', 'short', 'no_sign', 'textual', 'en_textual'] = 'formal', ndigits: int | None = None) -> str:
+    def format_amount(self,
+            amount: Decimal,
+            specifier: MoneySpecifierFormat | str = DEFAULT_SPECIFIER,
+            ndigits: int | None = None
+        ) -> str:
         """
-        `all` -> $212.50 USD (US Dollar)
-
-        `informal` -> $212.50
-
-        `formal` -> $212.50 USD
-
-        `short` -> US$ 212.50
-
-        `no_sign` -> 212.50 USD
-
-        `textual` -> 212.50 US Dollars
+        Format the monetary value according to the specified formatter.
         
-        `en_textual` -> 212.50 US Dollars (in English)
-        """
+        ## Parameters:
+        amount : Decimal - The monetary value to be formatted.
+        specifier : MoneySpecifierFormat - The format specifier for the monetary value.
+        ndigits : int | None - The number of decimal places to include in the formatted amount. If None, the recomended number of decimal places of the self currency is used.
+        
+        ## Specifiers
+        
+        ==============================
+        
+        `all` -> $2,120.50 USD (US Dollar)
+        
+        `informal` -> $2,120.50
+        
+        `formal` -> $2,120.50 USD
+        > default
+        
+        `short` -> US$ 2,120.50
+        
+        `no_sign` -> 2,120.50 USD
+        
+        `textual` -> 2,120.50 US Dollars
+        
+        `en_textual` -> 2,120.50 US Dollars
+        > uses the english naming convention for the currency
+        
+        `none` -> 2,120.50
 
+        
+        ## Separators (separated by ":")
+        
+        ==============================
+        
+        `comma:short` -> US$ 2,125,000.00
+        > default
+        
+        `dot:textual` -> 2.125,000.00 US Dollars
+        
+        `pretty:informal` -> $2'125,000.00
+        
+        `simple:no_sign` -> 2120.50 USD
+        
+        
+        ## Sample
+        
+        `pretty:informal` -> $2'125,000.0
+        """
         Assertion(amount).must_be(Decimal)
-        Assertion(repr).must_be(str)
+        Assertion(specifier).must_be(str)
+        Assertion(ndigits).must_be(int, None)
+
+        if ':' in specifier:
+            separator, representation = specifier.split(':', 1)
+        else:
+            separator, representation = 'comma', specifier or 'formal'
+
+        if separator not in ('comma', 'dot', 'pretty', 'simple'):
+            raise ValueError(f'Unknown separator mode: {separator!r}')
 
         if ndigits is None:
             ndigits = self.__ndigits
+        elif ndigits < 0:
+            raise ValueError(f'ndigits must be greater than or equal to zero, got {ndigits}')
+
         sign: str = '-' if amount < 0 else ''
         amount: Decimal = abs(amount)
-        formatted_amount: str = f'{amount:.{ndigits}f}'
+        formatted_amount: str = f'{amount:,.{ndigits}f}'
+        match separator:
+            case 'dot':
+                formatted_amount = formatted_amount.replace(',', '.', 1)
+            case 'pretty':
+                formatted_amount = formatted_amount.replace(',', "'", 1)
+            case 'simple':
+                formatted_amount = formatted_amount.replace(',', '')
 
-        match repr:
+        match representation:
             case 'all':
                 formatted_name: str = (
                     (
@@ -207,8 +266,10 @@ rf'''
                     ) if self.__english_name is not None else self.__name
                 )
                 return f'{sign}{formatted_amount} {formatted_name}'
+            case 'none':
+                return f'{sign}{formatted_amount}'
             case _:
-                raise ValueError(f'Unknown format representation: {repr}')
+                raise ValueError(f'Unknown format representation: {representation}')
 
     @classmethod
     def get_by_code(cls, code: str) -> Currency | None:
@@ -525,3 +586,5 @@ class Currencies:
         local_name=('भारतीय रुपया', 'भारतीय रुपये'),
         english_name=('Indian Rupee', 'Indian Rupees'),
     )
+
+#??????????????????????????????????

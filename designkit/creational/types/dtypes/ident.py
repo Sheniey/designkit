@@ -1,10 +1,9 @@
 
 import re
-from dataclasses import dataclass
-from designkit.behavioral.typing import Assertion, classname
-from typing import Any, Self, Never
 
-from designkit.creational.types.utils import Numeric, DType, parser_cache, Default
+from designkit.behavioral.typing import Assertion, classname
+from designkit.creational.types.utils import DType
+
 
 pattern: re.Pattern = re.compile(
     r'\w[a-zA-Z0-9_]*',
@@ -75,4 +74,3 @@ class Identifier(DType):
     @property
     def blacklist(self) -> list[str]:
         return self.__blacklist
-

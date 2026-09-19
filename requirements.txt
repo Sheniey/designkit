@@ -3,3 +3,6 @@ designkit_utils==0.6.1
 validators==0.35.0
 pathlib==1.0.1
 rich==15.0.0
+python-dotenv==1.2.3
+httpx==0.28.1
+msgspec==0.21.1

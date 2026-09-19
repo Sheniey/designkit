@@ -2,12 +2,13 @@
 import re, httpx
 from validators import ipv4 as validate_ipv4, ipv6 as validate_ipv6
 from designkit.behavioral.typing import Assertion, classname
-from typing import Any, Literal, Self
+from typing import Any, Literal
 
-from designkit.creational.types.utils import Numeric, DType, parser_cache
+from designkit.creational.types.utils import DType, parser_cache
 
 type IPv4Aliasses = Literal['localhost', 'broadcast', 'any']
 type HTTPMethod = Literal['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE', 'CONNECT']
+
 
 ipv4_pattern: re.Pattern = re.compile(
     r'(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'

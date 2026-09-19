@@ -36,7 +36,7 @@ class HTTPResponse[T]:
             case s if 500 <= s < 600:
                 return ServerFailure(value=value, status=s)
             case _:
-                raise ValueError(f"Invalid HTTP status code: {s}")
+                raise ValueError(f'Invalid HTTP status code: {s}')
 
 
 
@@ -51,7 +51,7 @@ class Info[T](HTTPResponse[T]):
 
     def __post_init__(self) -> None:
         if not (100 <= self.status < 200):
-            raise ValueError("Status code for Info must be in the range [100, 199]")
+            raise ValueError('Status code for Info must be in the range [100, 199]')
 
 @dataclass(frozen=True)
 class Success[T](HTTPResponse[T]):
@@ -60,7 +60,7 @@ class Success[T](HTTPResponse[T]):
 
     def __post_init__(self) -> None:
         if not (200 <= self.status < 300):
-            raise ValueError("Status code for Success must be in the range [200, 299]")
+            raise ValueError('Status code for Success must be in the range [200, 299]')
 
 @dataclass(frozen=True)
 class Redirect[T](HTTPResponse[T]):
@@ -69,7 +69,7 @@ class Redirect[T](HTTPResponse[T]):
 
     def __post_init__(self) -> None:
         if not (300 <= self.status < 400):
-            raise ValueError("Status code for Redirect must be in the range [300, 399]")
+            raise ValueError('Status code for Redirect must be in the range [300, 399]')
 
 @dataclass(frozen=True)
 class ClientFailure[T](HTTPResponse[T]):
@@ -78,7 +78,7 @@ class ClientFailure[T](HTTPResponse[T]):
 
     def __post_init__(self) -> None:
         if not (400 <= self.status < 500):
-            raise ValueError("Status code for ClientFailure must be in the range [400, 499]")
+            raise ValueError('Status code for ClientFailure must be in the range [400, 499]')
     
 @dataclass(frozen=True)
 class ServerFailure[T](HTTPResponse[T]):
@@ -87,7 +87,7 @@ class ServerFailure[T](HTTPResponse[T]):
 
     def __post_init__(self) -> None:
         if not (500 <= self.status < 600):
-            raise ValueError("Status code for ServerFailure must be in the range [500, 599]")
+            raise ValueError('Status code for ServerFailure must be in the range [500, 599]')
 
 
 

@@ -2,8 +2,8 @@
 from functools import wraps
 from typing import Callable, overload, Any
 
-from .models import _MISSING, AbstractCache
-from .lru_cache import LRUCache
+from designkit.behavioral.cache.models import _MISSING, AbstractCache
+from designkit.behavioral.cache.lru_cache import LRUCache
 
 
 @overload
@@ -17,7 +17,7 @@ def cached[F: Callable[..., R], R](
     *,
     capacity: int = 32,
     cache: type[AbstractCache[R]] = LRUCache,
-    skip_when: Callable[[tuple[Any], dict[str, Any]], bool] = lambda args, kwargs: False,
+    skip_when: Callable[[tuple[Any], dict[str, Any]], bool] = lambda *args, **kwargs: False,
 ) -> Callable[[F], F]: ...
 
 def cached[F: Callable[..., R], R](
@@ -26,7 +26,7 @@ def cached[F: Callable[..., R], R](
     *,
     capacity: int = 32,
     cache: type[AbstractCache[R]] = LRUCache,
-    skip_when: Callable[[tuple[Any], dict[str, Any]], bool] = lambda args, kwargs: False,
+    skip_when: Callable[[tuple[Any], dict[str, Any]], bool] = lambda *args, **kwargs: False,
 ) -> Callable[[F], F]:
     def decorator(func: F) -> F:
         @wraps(func)

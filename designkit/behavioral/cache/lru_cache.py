@@ -4,6 +4,7 @@ from typing import Hashable
 from designkit.behavioral.cache.exceptions import ItemNotHashableError
 from designkit.behavioral.cache.models import _MISSING, AbstractCache
 
+
 class Node[T]:
     def __init__(self, key: Hashable, value: T) -> None:
         self.key: Hashable = key
@@ -20,6 +21,9 @@ class LRUCache[T](AbstractCache[T]):
         self.__head.next = self.__tail
         self.__tail.prev = self.__head
 
+    def __str__(self) -> str:
+        return f'{self.__class__.__name__}( capacity={self.__capacity}, map={self.__map} )'
+    
     def __repr__(self) -> str:
         nodes: list[str] = []
         current: Node[T] | None = self.__head.next
@@ -30,11 +34,8 @@ class LRUCache[T](AbstractCache[T]):
         
         return ' <-> '.join(nodes)
 
-    def __str__(self) -> str:
-        return f'{self.__class__.__name__}( capacity={self.__capacity}, map={self.__map} )'
-
     def __getitem__(self, key: Hashable) -> T:
-        return self.get(key)
+        return self.get(key, _MISSING)
 
     def __setitem__(self, key: Hashable, value: T) -> None:
         self.put(key, value)

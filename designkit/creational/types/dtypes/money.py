@@ -1,13 +1,17 @@
 
 import re
 from decimal import Decimal
-from designkit.creational.types.dtypes.currency import Currency, Currencies
+from designkit.behavioral.cache import LRUCache
+from typing import Final as Const, Callable, Self
+from designkit.creational.types.dtypes.currency import (
+    Currency, Currencies,
+    MoneySpecifierFormat, DEFAULT_SPECIFIER
+)
 from designkit.creational.types.dtypes.percentage import Percentage
 from designkit.behavioral.typing import Assertion, classname
-from designkit.behavioral.cache import LRUCache
-from typing import Final as Const, Callable, Literal, Self
 
 from designkit.creational.types.utils import Numeric, Default, DType, parser_cache
+
 
 currency_symbols: str = r'(\$|€|¥|£|S/|₹|₽|₩|₺|₴|₦|₫|฿|₡|₲|₵|₭|₮|₱|₸|₾|₼|₿|₢|₥|₰|₯|₠|₣|R$)'
 
@@ -60,9 +64,11 @@ r'''
 )
 ''', re.VERBOSE)
 
+
 MATCHER_MATCH: Const[str] = 'match'
 MATCHER_FULLMATCH: Const[str] = 'fullmatch'
 MATCHER_SEARCH: Const[str] = 'search'
+
 
 def verify_currency(local_currency: Currency, external_currency: Currency, father: str) -> None:
     if local_currency != external_currency:
@@ -181,6 +187,7 @@ def parse_money(
         case _:
             raise TypeError(f'{father} must be a str, int, float, or Decimal, got {classname(value)}')
 
+
 class Money(DType):
     # We must to support those notations:
     #  $212,  $ 212,  US$ 212,  $212 USD,  $ 212 USD,  212 USD,  USD 212
@@ -220,48 +227,9 @@ class Money(DType):
     def __repr__(self) -> str:
         return f'{classname(self)}({self.__currency.format_amount(self.__value, "all")})'
 
-    def __format__(self, format_spec: str | Literal['all', 'informal', 'formal', 'short', 'no_sign', 'textual', 'en_textual'] = 'formal') -> str:
-        """
-        `all` -> $212.50 USD (US Dollar)
-        
-        `informal` -> $212.50
-        
-        `formal` -> $212.50 USD
-        
-        `short` -> US$ 212.50
-        
-        `no_sign` -> 212.50 USD
-
-        `textual` -> 212.50 US Dollars
-        
-        `en_textual` -> 212.50 US Dollars (in English)
-
-        `----------`
-        
-        `.4f-formal` -> $212.5000 USD
-
-        `.2f-informal` -> $212.50
-
-        `----------`
-
-        `.1f` -> 212.5
-        """
-
-        if format_spec in ('', 'all', 'informal', 'formal', 'short', 'no_sign', 'textual', 'en_textual'):
-            return self.__currency.format_amount(self.__value, format_spec)
-
-        if format_spec.startswith('.') and '-' not in format_spec and '+' not in format_spec:
-            # Check if the format_spec has a precision specifier
-            precision_match = re.match(r'(\.\d+)([a-zA-Z_-]+)?', format_spec)
-            if precision_match:
-                precision = int(precision_match.group(1).replace('.', ''))
-                specifier = precision_match.group(2) or 'formal'
-                return self.__currency.format_amount(self.__value, specifier, precision)
-
-            else:
-                raise ValueError(f'Unknown format specifier: {format_spec!r}')
-
-        return f'{self.__value:{format_spec}}'
+    def __format__(self, format_spec: str | MoneySpecifierFormat = 'comma:formal') -> str:
+        """Recommended to use the `.format` method for consistent formatting of Money instances."""
+        return self.format(format_spec)
 
     def __int__(self) -> int:
         return int(self.__value)
@@ -417,9 +385,86 @@ class Money(DType):
         except ValueError:
             return False
 
-    def format(self, formatter: Callable[[Decimal, Currency], str]) -> str:
-        Assertion(formatter).must_be(Callable)
-        return formatter(self.__value, self.__currency)
+    def format(self,
+            formatter:
+                  Callable[[Decimal, Currency], str]
+                | MoneySpecifierFormat
+                | str | None = DEFAULT_SPECIFIER
+        ) -> str:
+        """
+        Format the monetary value according to the specified formatter.
+
+        ## Parameters:
+        formatter : Callable | Specifier | None - The format specifier, custom formatting function or default formatter.
+
+        ## Specifiers
+
+        ==============================
+
+        `all` -> $2,120.50 USD (US Dollar)
+
+        `informal` -> $2,120.50
+
+        `formal` -> $2,120.50 USD
+        > default
+
+        `short` -> US$ 2,120.50
+
+        `no_sign` -> 2,120.50 USD
+
+        `textual` -> 2,120.50 US Dollars
+
+        `en_textual` -> 2,120.50 US Dollars
+        > uses the english naming convention for the currency
+
+        `none` -> 2,120.50
+
+
+        ## Precision (separated by "-")
+
+        ==============================
+
+        `.4f-formal` -> $212.5000 USD
+
+        `.2f-informal` -> $212.50
+
+
+        ## Separators (separated by ":")
+
+        ==============================
+
+        `comma:short` -> US$ 2,125,000.00
+        > default
+
+        `dot:textual` -> 2.125,000.00 US Dollars
+
+        `pretty:informal` -> $2'125,000.00
+
+        `simple:no_sign` -> 2120.50 USD
+
+
+        ## Sample
+
+        `.1f-pretty:informal` -> $2'125,000.0
+        """
+        match formatter:
+            # custom formatter function
+            case _ if callable(formatter):
+                return formatter(self.__value, self.__currency)
+            # predefined format specifiers
+            case str():
+                precision_match: re.Match | None = re.fullmatch(r'\.(\d+)[fF]-(.+)', formatter)
+                if precision_match:
+                    precision: int = int(precision_match.group(1))
+                    specifier: str = precision_match.group(2)
+                    return self.__currency.format_amount(self.__value, specifier, precision)
+                return self.__currency.format_amount(self.__value, formatter)
+            # just money with comma separation
+            case None:
+                return self.__currency.format_amount(self.__value, DEFAULT_SPECIFIER)
+            # for unknown formatters
+            case _:
+                raise ValueError(f'The provided formatter "{formatter}" is not a function, specifier, or default (None) formatter.')
 
     def copy(self) -> Money:
         return Money(self.__value, self.__currency, _skip_parser=True)

@@ -1,10 +1,11 @@
 
 import re
-from designkit.behavioral.typing import Assertion, classname
 from decimal import Decimal
-from typing import Any, Self, Literal
+from typing import Self, Literal
 
+from designkit.behavioral.typing import Assertion, classname
 from designkit.creational.types.utils import Numeric, DType, parser_cache
+
 
 soft_pattern: re.Pattern = re.compile(r'[+-]?(0?(\.|,))?(\d+(?:(\.|,)\d+)?)\s?%?')
 explicit_pattern: re.Pattern = re.compile(r'[+-]?(0(\.|,))?(\d+(?:(\.|,)\d+)?)%')
@@ -260,37 +261,7 @@ class Percentage(DType):
         verify_limits(new_value, self.__limits, classname(self))
         self.__value = new_value
         return self
-
-    def __lshift__(self, other: str | Numeric | Percentage) -> Percentage:
-        other_value, _ = parse_percentage(other, 'other')
-        return Percentage(self.__value << other_value, limits=self.__limits)
-
-    def __rlshift__(self, other: str | Numeric | Percentage) -> Percentage:
-        other_value, _ = parse_percentage(other, 'other')
-        return Percentage(other_value << self.__value, limits=self.__limits)
-
-    def __ilshift__(self, other: str | Numeric | Percentage) -> Self:
-        other_value, _ = parse_percentage(other, 'other')
-        new_value: Decimal = self.__value << other_value
-        verify_limits(new_value, self.__limits, classname(self))
-        self.__value = new_value
-        return self
-
-    def __rshift__(self, other: str | Numeric | Percentage) -> Percentage:
-        other_value, _ = parse_percentage(other, 'other')
-        return Percentage(self.__value >> other_value, limits=self.__limits)
-
-    def __rrshift__(self, other: str | Numeric | Percentage) -> Percentage:
-        other_value, _ = parse_percentage(other, 'other')
-        return Percentage(other_value >> self.__value, limits=self.__limits)
-
-    def __irshift__(self, other: str | Numeric | Percentage) -> Self:
-        other_value, _ = parse_percentage(other, 'other')
-        new_value: Decimal = self.__value >> other_value
-        verify_limits(new_value, self.__limits, classname(self))
-        self.__value = new_value
-        return self
-
+    
     def __gt__(self, other: str | Numeric | Percentage) -> bool:
         other_value, _ = parse_percentage(other, 'other')
         return self.__value > other_value

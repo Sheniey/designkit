@@ -68,13 +68,13 @@ class Future[T, E]:
 class Promise[T, E](Future[T, E]):
     def resolve(self, value: T) -> None:
         if self.settled:
-            raise RuntimeError("Cannot resolve a Promise that is already settled.")
+            raise RuntimeError('Cannot resolve a Promise that is already settled.')
         
         self.state = Resolved(value)
         
     def reject(self, error: E) -> None:
         if self.settled:
-            raise RuntimeError("Cannot reject a Promise that is already settled.")
+            raise RuntimeError('Cannot reject a Promise that is already settled.')
         
         self.state = Rejected(error)
 
@@ -88,7 +88,7 @@ class Task[T, E](Future[T, E]):
         ) -> None:
 
         if self.settled:
-            raise RuntimeError("Cannot run a Task that is already settled.")
+            raise RuntimeError('Cannot run a Task that is already settled.')
         
         _normalized_processes: list[ProcessAsTuple[T, Any, Any]] = []
         for process in processes:
@@ -100,7 +100,7 @@ class Task[T, E](Future[T, E]):
             elif isinstance(process, tuple) and len(process) == 3:
                 _normalized_processes.append(process)
             else:
-                raise ValueError("Each process must be either a dict or a tuple of (func, args, kwargs).")
+                raise ValueError('Each process must be either a dict or a tuple of (func, args, kwargs).')
 
         workers: int = min(workers, mp.cpu_count())
         try:

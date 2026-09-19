@@ -3,7 +3,8 @@ import re
 from designkit.behavioral.typing import Assertion, classname
 from typing import Literal, Self
 
-from designkit.creational.types.utils import Numeric, DType, parser_cache
+from designkit.creational.types.utils import DType, parser_cache
+
 
 soft_pattern: re.Pattern = re.compile(r'[:]?([0-9]{1,5})')
 explicit_pattern: re.Pattern = re.compile(r':([0-9]{1,5})')
