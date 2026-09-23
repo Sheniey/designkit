@@ -56,7 +56,7 @@ def parse_ipv6(value: str | IPv6, father: str) -> str:
         case IPv6():
             return value.value
 
-class IPv4(DType['IPv4', str | int | 'IPv4']):
+class IPv4(DType):
     IP_ANY: str         = '0.0.0.0'
     IP_LOCALHOST: str   = '127.0.0.1'
     IP_BROADCAST: str   = '255.255.255.255'

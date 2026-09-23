@@ -315,7 +315,7 @@ class Percentage(DType):
 
     @classmethod
     def from_fraction(cls, fraction: float | Decimal) -> Percentage:
-        return cls(fraction * Decimal(100))
+        return cls(Decimal(fraction) * Decimal(100))
 
     def to_fraction(self) -> Decimal:
         return self.__value / Decimal(100)

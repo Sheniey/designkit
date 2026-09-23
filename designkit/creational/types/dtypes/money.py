@@ -82,7 +82,7 @@ def get_true_currency(currency: Currency) -> Currency:
         return currency.father_currency
     return currency
 
-@parser_cache(skip_when=lambda args, kwargs: bool(args) and isinstance(args[0], Money))
+@parser_cache(skip_when=lambda value, *args, **kwargs: isinstance(value, Money))
 def parse_money(
         value: str | Numeric | Money,
         currency: Currency | None,

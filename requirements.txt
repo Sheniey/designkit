@@ -5,4 +5,4 @@ pathlib==1.0.1
 rich==15.0.0
 python-dotenv==1.2.3
 httpx==0.28.1
-msgspec==0.21.1
+phonenumbers

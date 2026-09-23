@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "designkit"
-version = "0.2.0"
+version = "0.2.1"
 description = "A modern Python toolkit for software architecture, featuring all 12 GoF + 18 original design patterns, original architectural patterns, and powerful developer utilities."
 readme = "README.md"
 requires-python = ">=3.14"
@@ -47,7 +47,7 @@ dependencies = [
     "rich>=15.0.0,<16.0",
     "python-dotenv>=1.2.3,<2.0",
     "httpx>=0.28.1,<0.29",
-    "msgspec>=0.21.1,<0.22",
+    "phonenumbers",
 ]
 
 [project.urls]
